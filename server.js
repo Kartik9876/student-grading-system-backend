@@ -109,11 +109,18 @@ app.post("/subjects", async (req, res) => {
 });
 
 app.delete("/subjects/:name", async (req, res) => {
+  const subjectName = req.params.name;
+
   try {
-    await Subject.findOneAndDelete({ name: req.params.name });
-    res.json({ message: "Subject deleted" });
+    const deletedSubject = await Subject.findOneAndDelete({ name: subjectName });
+
+    if (!deletedSubject) {
+      return res.status(404).json({ message: "Subject not found" });
+    }
+
+    res.json({ message: "Subject deleted successfully" });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: "Error deleting subject" });
   }
 });
 
